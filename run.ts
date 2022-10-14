@@ -35,9 +35,11 @@ const Delta = 0.1
 const AgentAmount = 100
 
 class AgentClass {
-    BiasTable: number[][]
-    constructor(BiasTable: number[][]) {
-        this.BiasTable = BiasTable
+    //Layer, Node
+    WeightTable: number[][]
+
+    constructor(WeightTable: number[][]) {
+        this.WeightTable = WeightTable
     }
 }
 
@@ -45,14 +47,14 @@ let Agents: AgentClass[] = []
 
 //Init agents
 for (let a = 0; a < AgentAmount; a++) {
-    const BiasTable: number[][] = []
+    const WeightTable: number[][] = []
 
     for (let i = 0; i < Inputs; i++) {
-        BiasTable[i] = [];
+        WeightTable[i] = [];
         for (let k = 0; k < Outputs.length; k++)
-            BiasTable[i][k] = Math.random() * 100; //TODO: Revisit
+            WeightTable[i][k] = Math.random() * 100; //TODO: Revisit
     }
-    Agents.push(new AgentClass(BiasTable))
+    Agents.push(new AgentClass(WeightTable))
 }
 
 let runs = 1
@@ -92,9 +94,9 @@ function GetAgentScore(Agent: AgentClass): number {
 
 function RunSim(Agent: AgentClass, Input: number[]) {
     const out: number[] = []
-    for (let i = 0; i < Agent.BiasTable.length; i++) {
-        for (let b = 0; b < Agent.BiasTable[i].length; b++) {
-            out[b] = Input[i] * Agent.BiasTable[i][b]
+    for (let i = 0; i < Agent.WeightTable.length; i++) {
+        for (let b = 0; b < Agent.WeightTable[i].length; b++) {
+            out[b] = Input[i] * Agent.WeightTable[i][b]
         }
     }
     return out
@@ -107,11 +109,11 @@ function Evolve(results: { score: number, agent: AgentClass }[]) {
     const best = results[0].agent
     const Agents: AgentClass[] = [best]
     for (let i = 1; i < AgentAmount; i++) {
-        const BiasTable = best.BiasTable.map(e => e.map(e => e))
-        const randomi = RandomIndex(BiasTable)
-        const randomk = RandomIndex(BiasTable[randomi])
-        BiasTable[randomi][randomk] += (Math.random() * 2 - 1) * Delta
-        Agents[i] = new AgentClass(BiasTable)
+        const WeightTable = best.WeightTable.map(e => e.map(e => e))
+        const randomi = RandomIndex(WeightTable)
+        const randomk = RandomIndex(WeightTable[randomi])
+        WeightTable[randomi][randomk] += (Math.random() * 2 - 1) * Delta
+        Agents[i] = new AgentClass(WeightTable)
     }
     return Agents
 }
