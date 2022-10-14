@@ -105,15 +105,10 @@ function GetAgentScore(Agent: AgentClass): number {
 function RunSim(Agent: AgentClass, Input: number[]) {
     const nodes: number[][] = [Input]
     for (let layer = 0; layer < Agent.WeightTable.length; layer++) {
-        nodes[layer + 1] = []
-
-        for (let i = 0; i < Agent.WeightTable[layer].length; i++) {
-            for (let w = 0; w < Agent.WeightTable[layer][i].length; w++) {
-                if (!nodes[layer + 1][w])
-                    nodes[layer + 1][w] = 0
+        nodes[layer + 1] = Array(Layers[layer + 1]).fill(0)
+        for (let i = 0; i < Agent.WeightTable[layer].length; i++)
+            for (let w = 0; w < Agent.WeightTable[layer][i].length; w++)
                 nodes[layer + 1][w] += nodes[layer][i] * Agent.WeightTable[layer][i][w]
-            }
-        }
     }
 
     return nodes[nodes.length - 1]
