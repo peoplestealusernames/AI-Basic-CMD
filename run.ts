@@ -33,12 +33,17 @@ Outputs.forEach((e, i) => OutHash[e] = i)
 const Delta = 0.1
 
 const AgentAmount = 100
+// Layers is count
+// Amount in layers is element
+const HiddenLayers = [10]
+
+const Layers = [Inputs, ...HiddenLayers, Outputs.length]
 
 class AgentClass {
-    //Layer, Node
-    WeightTable: number[][]
+    //Layer, Node, Weight
+    WeightTable: number[][][]
 
-    constructor(WeightTable: number[][]) {
+    constructor(WeightTable: number[][][]) {
         this.WeightTable = WeightTable
     }
 }
@@ -47,13 +52,17 @@ let Agents: AgentClass[] = []
 
 //Init agents
 for (let a = 0; a < AgentAmount; a++) {
-    const WeightTable: number[][] = []
+    const WeightTable: number[][][] = []
 
-    for (let i = 0; i < Inputs; i++) {
-        WeightTable[i] = [];
-        for (let k = 0; k < Outputs.length; k++)
-            WeightTable[i][k] = Math.random() * 100; //TODO: Revisit
+    for (let layer = 0; layer < Layers.length - 1; layer++) {
+        WeightTable[layer] = [];
+        for (let i = 0; i < Layers[layer]; i++) {
+            WeightTable[layer][i] = [];
+            for (let o = 0; o < Layers[layer + 1]; o++)
+                WeightTable[layer][i][o] = Math.random() * 100; //TODO: Revisit
+        }
     }
+
     Agents.push(new AgentClass(WeightTable))
 }
 
@@ -87,19 +96,27 @@ function GetAgentScore(Agent: AgentClass): number {
         //TODO: changeable score system
         const result = NormalizeArray(RunSim(Agent, state.input))
         const index = OutHash[state.output] //index of correct result
+
         return result[index]
     });
     return ArrayAvg(scores)
 }
 
 function RunSim(Agent: AgentClass, Input: number[]) {
-    const out: number[] = []
-    for (let i = 0; i < Agent.WeightTable.length; i++) {
-        for (let b = 0; b < Agent.WeightTable[i].length; b++) {
-            out[b] = Input[i] * Agent.WeightTable[i][b]
+    const nodes: number[][] = [Input]
+    for (let layer = 0; layer < Agent.WeightTable.length; layer++) {
+        nodes[layer + 1] = []
+
+        for (let i = 0; i < Agent.WeightTable[layer].length; i++) {
+            for (let w = 0; w < Agent.WeightTable[layer][i].length; w++) {
+                if (!nodes[layer + 1][w])
+                    nodes[layer + 1][w] = 0
+                nodes[layer + 1][w] += nodes[layer][i] * Agent.WeightTable[layer][i][w]
+            }
         }
     }
-    return out
+
+    return nodes[nodes.length - 1]
 }
 
 //Decend
@@ -109,10 +126,12 @@ function Evolve(results: { score: number, agent: AgentClass }[]) {
     const best = results[0].agent
     const Agents: AgentClass[] = [best]
     for (let i = 1; i < AgentAmount; i++) {
-        const WeightTable = best.WeightTable.map(e => e.map(e => e))
-        const randomi = RandomIndex(WeightTable)
-        const randomk = RandomIndex(WeightTable[randomi])
-        WeightTable[randomi][randomk] += (Math.random() * 2 - 1) * Delta
+        //Unpack the array to prevent refrenced based editing
+        const WeightTable = best.WeightTable.map(e => e.map(e => e.map(e => e)))
+        const randoml = RandomIndex(WeightTable)
+        const randomi = RandomIndex(WeightTable[randoml])
+        const randomw = RandomIndex(WeightTable[randoml][randomi])
+        WeightTable[randoml][randomi][randomw] += (Math.random() * 2 - 1) * Delta
         Agents[i] = new AgentClass(WeightTable)
     }
     return Agents
