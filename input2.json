@@ -1,0 +1,130 @@
+[
+    {
+        "output": "Black",
+        "input": [
+            0,
+            0,
+            0
+        ]
+    },
+    {
+        "output": "White",
+        "input": [
+            255,
+            255,
+            255
+        ]
+    },
+    {
+        "output": "Red",
+        "input": [
+            255,
+            0,
+            0
+        ]
+    },
+    {
+        "output": "Lime",
+        "input": [
+            0,
+            255,
+            0
+        ]
+    },
+    {
+        "output": "Blue",
+        "input": [
+            0,
+            0,
+            255
+        ]
+    },
+    {
+        "output": "Yellow",
+        "input": [
+            255,
+            255,
+            0
+        ]
+    },
+    {
+        "output": "Cyan",
+        "input": [
+            0,
+            255,
+            255
+        ]
+    },
+    {
+        "output": "Magenta",
+        "input": [
+            255,
+            0,
+            255
+        ]
+    },
+    {
+        "output": "Silver",
+        "input": [
+            192,
+            192,
+            192
+        ]
+    },
+    {
+        "output": "Gray",
+        "input": [
+            128,
+            128,
+            128
+        ]
+    },
+    {
+        "output": "Maroon",
+        "input": [
+            128,
+            0,
+            0
+        ]
+    },
+    {
+        "output": "Olive",
+        "input": [
+            128,
+            128,
+            0
+        ]
+    },
+    {
+        "output": "Green",
+        "input": [
+            0,
+            128,
+            0
+        ]
+    },
+    {
+        "output": "Purple",
+        "input": [
+            128,
+            0,
+            128
+        ]
+    },
+    {
+        "output": "Teal",
+        "input": [
+            0,
+            128,
+            128
+        ]
+    },
+    {
+        "output": "Navy",
+        "input": [
+            0,
+            0,
+            128
+        ]
+    }
+]
