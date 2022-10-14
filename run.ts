@@ -30,7 +30,7 @@ const Outputs = IndexOutputs(data)
 const OutHash: { [key: string]: number } = {}
 Outputs.forEach((e, i) => OutHash[e] = i)
 
-const Delta = 0.01
+const Delta = 0.1
 
 const AgentAmount = 100
 
@@ -110,7 +110,7 @@ function Evolve(results: { score: number, agent: AgentClass }[]) {
         const BiasTable = best.BiasTable.map(e => e.map(e => e))
         const randomi = RandomIndex(BiasTable)
         const randomk = RandomIndex(BiasTable[randomi])
-        BiasTable[randomi][randomk] += Math.random() > .5 ? Delta : -Delta
+        BiasTable[randomi][randomk] += (Math.random() * 2 - 1) * Delta
         Agents[i] = new AgentClass(BiasTable)
     }
     return Agents
