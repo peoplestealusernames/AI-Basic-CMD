@@ -17,9 +17,17 @@ export function GetAgentScore(session: SessionClass, Agent: AgentClass): number 
 
     let nodes: number[][] = session.Data.map(e => e.input)
 
-    for (let layer = 0; layer < session.Layers.length - 1; layer++) {
-        nodes = simThread.setOutput([session.Layers[layer + 1], session.Data.length])
-            (session.Layers[layer], nodes, Agent.WeightTable[layer]) as number[][]
+    for (let layer = 0; layer < Agent.WeightTable.length; layer++) {
+        nodes = simThread
+            .setOutput([
+                Agent.WeightTable[layer].length,
+                session.Data.length
+            ])(
+                session.Layers[layer],
+                nodes,
+                Agent.WeightTable[layer]
+            ) as number[][]
+
     }
 
 
