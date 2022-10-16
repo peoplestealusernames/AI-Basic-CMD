@@ -1,6 +1,7 @@
 import { readFileSync } from "fs"
 import { format } from "util"
 import { input, AgentClass, rawInput, SessionClass } from "./classes"
+import { Evolve } from "./evolve"
 import { init } from "./init"
 import { RandomIndex } from "./misc"
 import { GetAgentScores } from "./simulate"
@@ -30,24 +31,5 @@ setInterval(() => {
     runs++
 
     //Decend
-    Evolve(results).map((e, i) => { session.Agents[i] = e })
+    Evolve(results, Delta).map((e, i) => { session.Agents[i] = e })
 }, 100)
-
-
-//Decend
-function Evolve(results: { score: number, agent: AgentClass }[]) {
-    //TODO: better evolve system
-    //Its already sorted by runtime otherwise max would need to be grabbed
-    const best = results[0].agent
-    const Agents: AgentClass[] = [best]
-    for (let i = 1; i < AgentAmount; i++) {
-        //Unpack the array to prevent refrenced based editing
-        const WeightTable = best.WeightTable.map(e => e.map(e => e.map(e => e)))
-        const randoml = RandomIndex(WeightTable)
-        const randomi = RandomIndex(WeightTable[randoml])
-        const randomw = RandomIndex(WeightTable[randoml][randomi])
-        WeightTable[randoml][randomi][randomw] += (Math.random() * 2 - 1) * Delta
-        Agents[i] = new AgentClass(WeightTable)
-    }
-    return Agents
-}
