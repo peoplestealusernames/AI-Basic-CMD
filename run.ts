@@ -15,7 +15,7 @@ const AgentAmount = 100
 // Amount in layers is element
 const HiddenLayers = [10]
 
-const session = new SessionClass(rawData, HiddenLayers, AgentAmount)
+const session = new SessionClass(rawData, HiddenLayers, AgentAmount, Delta)
 
 let runs = 1
 

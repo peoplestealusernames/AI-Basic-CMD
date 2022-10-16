@@ -24,9 +24,12 @@ export class SessionClass {
     AgentAmount: number
     Data: input[]
     Layers: number[]
+    Delta: number
 
-    constructor(rawData: rawInput[], HiddenLayers: number[], AgentAmount: number) {
+    constructor(rawData: rawInput[], HiddenLayers: number[], AgentAmount: number, Delta: number) {
         this.AgentAmount = AgentAmount
+        this.Delta = Delta
+
         const Unpack = init(rawData, HiddenLayers, AgentAmount)
         this.Data = Unpack[0]
         this.Agents = Unpack[1]
