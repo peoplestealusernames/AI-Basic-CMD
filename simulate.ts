@@ -20,7 +20,7 @@ export function GetAgentScore(session: SessionClass, Agent: AgentClass): number 
     for (let layer = 0; layer < Agent.WeightTable.length; layer++) {
         nodes = simThread
             .setOutput([
-                Agent.WeightTable[layer].length,
+                Agent.WeightTable[layer][0].length,
                 session.Data.length
             ])(
                 session.Layers[layer],
@@ -29,8 +29,6 @@ export function GetAgentScore(session: SessionClass, Agent: AgentClass): number 
             ) as number[][]
 
     }
-
-
 
     const scores = nodes.map((output, i) => {
         //TODO: changeable score system
@@ -51,4 +49,4 @@ const simThread = gpu.createKernel(function (inputCount: number, nodes: number[]
         sum += nodes[this.thread.y][i] * Weights[i][this.thread.x]
 
     return sum
-}).setDynamicOutput(true)
+}).setDynamicOutput(true).setDynamicArguments(true)
