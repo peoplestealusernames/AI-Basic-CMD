@@ -3,12 +3,12 @@ import { NormalizeArray, ArrayAvg } from "./misc";
 
 //Simulator
 export function GetAgentScores(session: SessionClass) {
-    const scores = session.Agents.map(Agent => { return { score: GetAgentScore(session.Data, Agent), agent: Agent } })
+    const scores = session.Agents.map(Agent => { return { score: GetAgentScore(Agent, session.Data), agent: Agent } })
 
     return scores
 }
 
-export function GetAgentScore(data: input[], Agent: AgentClass): number {
+export function GetAgentScore(Agent: AgentClass, data: input[]): number {
     const scores = data.map(state => {
         //TODO: changeable score system
         const result = NormalizeArray(RunSim(Agent, state.input))
