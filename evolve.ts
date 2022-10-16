@@ -1,8 +1,8 @@
-import { AgentClass } from "./classes"
+import { AgentClass, SessionClass } from "./classes"
 import { RandomIndex } from "./misc"
 
 //Decend
-export function Evolve(results: { score: number, agent: AgentClass }[], Delta: number) {
+export function Evolve(session: SessionClass, results: { score: number, agent: AgentClass }[]) {
     //TODO: better evolve system
     //Its already sorted by runtime otherwise max would need to be grabbed
     const best = results[0].agent
@@ -13,7 +13,7 @@ export function Evolve(results: { score: number, agent: AgentClass }[], Delta: n
         const randoml = RandomIndex(WeightTable)
         const randomi = RandomIndex(WeightTable[randoml])
         const randomw = RandomIndex(WeightTable[randoml][randomi])
-        WeightTable[randoml][randomi][randomw] += (Math.random() * 2 - 1) * Delta
+        WeightTable[randoml][randomi][randomw] += (Math.random() * 2 - 1) * session.Delta
         Agents[i] = new AgentClass(WeightTable)
     }
     return Agents

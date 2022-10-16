@@ -31,5 +31,5 @@ setInterval(() => {
     runs++
 
     //Decend
-    Evolve(results, Delta).map((e, i) => { session.Agents[i] = e })
+    session.Agents = Evolve(session, results)
 }, 100)
