@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script type="module">
+        import {Step, init} from "./build/release.js";
+        import {formatData} from "./js/formating.js";
+
+        const Delta = 0.1
+        const AgentAmount = 100
+        // Layers is count
+        // Amount in layers is element
+        const HiddenLayers = [10]
+
+        let data = []
+        let layers = []
+        let agents = []
+
+        fetch("/input.json")
+            .then(e => e.blob())
+            .then(e => e.text())
+            .then(async (e) =>
+            {
+                console.log("loaded data")
+                const format = await formatData(JSON.parse(e))
+                data = format[0]
+                layers = format[1]
+                console.log("data formated\nlayers:", layers)
+                agents = await init(AgentAmount, layers)
+                console.log("agents")
+            })
+
+
+
+        function step()
+        {
+            Step(data, agents, layers, AgentAmount, Delta)
+        }
+
+        globalThis.step = step
+    </script>
+</head>
+
+<body>
+    <button onclick="globalThis.step()">
+        ass
+    </button>
+
+</body>
+
+</html>
