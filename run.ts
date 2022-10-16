@@ -13,7 +13,7 @@ const Delta = 0.1
 const AgentAmount = 100
 // Layers is count
 // Amount in layers is element
-const HiddenLayers = [10]
+const HiddenLayers: number[] = [3]
 
 const session = new SessionClass(rawData, HiddenLayers, AgentAmount, Delta)
 

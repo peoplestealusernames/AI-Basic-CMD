@@ -1,31 +1,46 @@
+import { GPU } from "gpu.js/src";
 import { AgentClass, input, SessionClass } from "./classes";
 import { NormalizeArray, ArrayAvg } from "./misc";
 
 //Simulator
 export function GetAgentScores(session: SessionClass) {
-    const scores = session.Agents.map(Agent => { return { score: GetAgentScore(Agent, session.Data), agent: Agent } })
+    const scores = session.Agents.map(Agent => {
+        return { score: GetAgentScore(session, Agent), agent: Agent }
+    })
 
     return scores
 }
 
-export function GetAgentScore(Agent: AgentClass, data: input[]): number {
-    const scores = data.map(state => {
-        //TODO: changeable score system
-        const result = NormalizeArray(RunSim(Agent, state.input))
+export function GetAgentScore(session: SessionClass, Agent: AgentClass): number {
+    //function (inputCount: number, nodes: number[][], Weights: number[][][]) {
+    //y = node group; x = outnode;
 
-        return result[state.output]
+    let nodes: number[][] = session.Data.map(e => e.input)
+
+    for (let layer = 0; layer < session.Layers.length - 1; layer++) {
+        nodes = simThread.setOutput([session.Layers[layer + 1], session.Data.length])
+            (session.Layers[layer], nodes, Agent.WeightTable[layer]) as number[][]
+    }
+
+
+
+    const scores = nodes.map((output, i) => {
+        //TODO: changeable score system
+        const result = NormalizeArray(output)
+
+        return result[session.Data[i].output]
     });
     return ArrayAvg(scores)
 }
 
-export function RunSim(Agent: AgentClass, Input: number[]) {
-    const nodes: number[][] = [Input]
-    for (let layer = 0; layer < Agent.WeightTable.length; layer++) {
-        nodes[layer + 1] = Array(Agent.WeightTable[layer][0].length).fill(0)
-        for (let i = 0; i < Agent.WeightTable[layer].length; i++)
-            for (let w = 0; w < Agent.WeightTable[layer][i].length; w++)
-                nodes[layer + 1][w] += nodes[layer][i] * Agent.WeightTable[layer][i][w]
-    }
+const gpu = new GPU({ mode: "gpu" })
 
-    return nodes[nodes.length - 1]
-}
+const simThread = gpu.createKernel(function (inputCount: number, nodes: number[][], Weights: number[][]) {
+    //y = node group; x = outnode;
+
+    let sum = 0
+    for (let i = 0; i < inputCount; i++)
+        sum += nodes[this.thread.y][i] * Weights[i][this.thread.x]
+
+    return sum
+}).setDynamicOutput(true)

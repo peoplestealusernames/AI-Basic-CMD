@@ -19,6 +19,11 @@ export class AgentClass {
     }
 }
 
+export type results = {
+    score: number;
+    agent: AgentClass;
+}
+
 export class SessionClass {
     Agents: AgentClass[]
     AgentAmount: number

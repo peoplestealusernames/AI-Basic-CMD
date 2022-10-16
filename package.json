@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@types/node": "^18.8.5"
+    "@types/node": "^18.8.5",
+    "gpu.js": "git@github.com:dhritzkiv/gpu.js.git"
   }
 }
