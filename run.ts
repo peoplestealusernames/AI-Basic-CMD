@@ -7,6 +7,7 @@ import { RandomIndex } from "./misc"
 import { GetAgentScores } from "./simulate"
 
 const rawData: rawInput[] = JSON.parse(readFileSync("./input.json", { encoding: "utf-8" }))
+const dataBatch = 2048
 
 const Delta = 0.1
 
@@ -15,7 +16,7 @@ const AgentAmount = 100
 // Amount in layers is element
 const HiddenLayers: number[] = [10]
 
-const session = new SessionClass(rawData, HiddenLayers, AgentAmount, Delta)
+const session = new SessionClass(rawData, HiddenLayers, AgentAmount, Delta, dataBatch)
 
 let runs = 1
 

@@ -30,10 +30,12 @@ export class SessionClass {
     Data: input[]
     Layers: number[]
     Delta: number
+    DataBatch: number
 
-    constructor(rawData: rawInput[], HiddenLayers: number[], AgentAmount: number, Delta: number) {
+    constructor(rawData: rawInput[], HiddenLayers: number[], AgentAmount: number, Delta: number, DataBatch: number) {
         this.AgentAmount = AgentAmount
         this.Delta = Delta
+        this.DataBatch = DataBatch
 
         const Unpack = init(rawData, HiddenLayers, AgentAmount)
         this.Data = Unpack[0]

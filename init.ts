@@ -11,7 +11,7 @@ export function init(rawData: rawInput[], HiddenLayers: number[], AgentAmount: n
     const OutHash: { [key: string]: number } = {}
     Outputs.forEach((e, i) => OutHash[e] = i)
 
-    const newData: input[] = rawData.map((e) => { return { input: e.input, output: OutHash[e.output] } }).filter((e, i) => i % 2 === 0)
+    const newData: input[] = rawData.map((e) => { return { input: e.input, output: OutHash[e.output] } })
 
     const Layers = [Inputs, ...HiddenLayers, Outputs.length]
 

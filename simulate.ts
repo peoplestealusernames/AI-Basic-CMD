@@ -17,18 +17,21 @@ export function GetAgentScore(session: SessionClass, Agent: AgentClass): number 
 
     let nodes: number[][] = session.Data.map(e => e.input)
 
-    for (let layer = 0; layer < Agent.WeightTable.length; layer++) {
-        nodes = simThread
-            .setOutput([
-                Agent.WeightTable[layer][0].length,
-                session.Data.length
-            ])(
-                session.Layers[layer],
-                nodes,
-                Agent.WeightTable[layer]
-            ) as number[][]
+    for (let layer = 0; layer < Agent.WeightTable.length; layer++)
+        for (let section = 0; section < session.Data.length; section += session.DataBatch) {
+            const remainer = session.Data.length - section;
+            const sectionLength = remainer < session.DataBatch ? remainer : session.DataBatch;
 
-    }
+            (simThread
+                .setOutput([
+                    session.Layers[layer + 1],
+                    sectionLength
+                ])(
+                    session.Layers[layer],
+                    nodes.slice(section, sectionLength + section),
+                    Agent.WeightTable[layer]
+                ) as number[][]).forEach((e, i) => { nodes[i + section] = e })
+        }
 
     const scores = nodes.map((output, i) => {
         //TODO: changeable score system
