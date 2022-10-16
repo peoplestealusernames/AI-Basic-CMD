@@ -1,9 +1,9 @@
-import { AgentClass, input } from "./classes";
+import { AgentClass, input, SessionClass } from "./classes";
 import { NormalizeArray, ArrayAvg } from "./misc";
 
 //Simulator
-export function GetAgentScores(data: input[], Agents: AgentClass[]) {
-    const scores = Agents.map(Agent => { return { score: GetAgentScore(data, Agent), agent: Agent } })
+export function GetAgentScores(session: SessionClass) {
+    const scores = session.Agents.map(Agent => { return { score: GetAgentScore(session.Data, Agent), agent: Agent } })
 
     return scores
 }

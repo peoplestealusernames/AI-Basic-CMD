@@ -1,6 +1,6 @@
 import { readFileSync } from "fs"
 import { format } from "util"
-import { input, AgentClass, rawInput } from "./classes"
+import { input, AgentClass, rawInput, SessionClass } from "./classes"
 import { init } from "./init"
 import { RandomIndex } from "./misc"
 import { GetAgentScores } from "./simulate"
@@ -14,14 +14,14 @@ const AgentAmount = 100
 // Amount in layers is element
 const HiddenLayers = [10]
 
-const [data, Agents, Layers] = init(rawData, HiddenLayers, AgentAmount)
+const session = new SessionClass(rawData, HiddenLayers, AgentAmount)
 
 let runs = 1
 
 //Runtime
 setInterval(() => {
     //Simulate
-    const results = GetAgentScores(data, Agents)
+    const results = GetAgentScores(session)
 
     //Output and sort
     //TODO: % correct
@@ -30,7 +30,7 @@ setInterval(() => {
     runs++
 
     //Decend
-    Evolve(results).map((e, i) => { Agents[i] = e })
+    Evolve(results).map((e, i) => { session.Agents[i] = e })
 }, 100)
 
 
