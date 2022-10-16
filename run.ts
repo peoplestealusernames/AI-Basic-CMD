@@ -1,34 +1,11 @@
 import { readFileSync } from "fs"
 import { format } from "util"
+import { input, AgentClass, rawInput } from "./classes"
+import { init } from "./init"
+import { RandomIndex } from "./misc"
+import { GetAgentScores } from "./simulate"
 
-type input = {
-    output: string
-    input: number[]
-}
-
-function IndexOutputs(data: input[]) {
-    const output = data.map(e => e.output)
-    return output.filter((e, i) => output.indexOf(e) === i)
-}
-
-function CheckInputs(data: input[]) {
-    const length = data[0].input.length
-    if (!length)
-        throw new Error(format("No input given on input 1:", data[0]))
-
-    const outliers = data.filter(e => e.input.length !== length)
-    if (outliers.length > 0)
-        throw new Error(format(`Input lengths did not match data set 1 (l=${length}):`, outliers))
-
-    return length
-}
-
-const data: input[] = JSON.parse(readFileSync("./input.json", { encoding: "utf-8" }))
-
-const Inputs = CheckInputs(data)
-const Outputs = IndexOutputs(data)
-const OutHash: { [key: string]: number } = {}
-Outputs.forEach((e, i) => OutHash[e] = i)
+const rawData: rawInput[] = JSON.parse(readFileSync("./input.json", { encoding: "utf-8" }))
 
 const Delta = 0.1
 
@@ -37,41 +14,14 @@ const AgentAmount = 100
 // Amount in layers is element
 const HiddenLayers = [10]
 
-const Layers = [Inputs, ...HiddenLayers, Outputs.length]
-
-class AgentClass {
-    //Layer, Node, Weight
-    WeightTable: number[][][]
-
-    constructor(WeightTable: number[][][]) {
-        this.WeightTable = WeightTable
-    }
-}
-
-let Agents: AgentClass[] = []
-
-//Init agents
-for (let a = 0; a < AgentAmount; a++) {
-    const WeightTable: number[][][] = []
-
-    for (let layer = 0; layer < Layers.length - 1; layer++) {
-        WeightTable[layer] = [];
-        for (let i = 0; i < Layers[layer]; i++) {
-            WeightTable[layer][i] = [];
-            for (let o = 0; o < Layers[layer + 1]; o++)
-                WeightTable[layer][i][o] = Math.random() * 100; //TODO: Revisit
-        }
-    }
-
-    Agents.push(new AgentClass(WeightTable))
-}
+const [data, Agents, Layers] = init(rawData, HiddenLayers, AgentAmount)
 
 let runs = 1
 
 //Runtime
 setInterval(() => {
     //Simulate
-    const results = GetAgentScores(Agents)
+    const results = GetAgentScores(data, Agents)
 
     //Output and sort
     //TODO: % correct
@@ -80,39 +30,9 @@ setInterval(() => {
     runs++
 
     //Decend
-    Agents = Evolve(results)
+    Evolve(results).map((e, i) => { Agents[i] = e })
 }, 100)
 
-
-//Simulator
-function GetAgentScores(Agents: AgentClass[]) {
-    const scores = Agents.map(Agent => { return { score: GetAgentScore(Agent), agent: Agent } })
-
-    return scores
-}
-
-function GetAgentScore(Agent: AgentClass): number {
-    const scores = data.map(state => {
-        //TODO: changeable score system
-        const result = NormalizeArray(RunSim(Agent, state.input))
-        const index = OutHash[state.output] //index of correct result
-
-        return result[index]
-    });
-    return ArrayAvg(scores)
-}
-
-function RunSim(Agent: AgentClass, Input: number[]) {
-    const nodes: number[][] = [Input]
-    for (let layer = 0; layer < Agent.WeightTable.length; layer++) {
-        nodes[layer + 1] = Array(Layers[layer + 1]).fill(0)
-        for (let i = 0; i < Agent.WeightTable[layer].length; i++)
-            for (let w = 0; w < Agent.WeightTable[layer][i].length; w++)
-                nodes[layer + 1][w] += nodes[layer][i] * Agent.WeightTable[layer][i][w]
-    }
-
-    return nodes[nodes.length - 1]
-}
 
 //Decend
 function Evolve(results: { score: number, agent: AgentClass }[]) {
@@ -130,28 +50,4 @@ function Evolve(results: { score: number, agent: AgentClass }[]) {
         Agents[i] = new AgentClass(WeightTable)
     }
     return Agents
-}
-
-//MISC
-function RandomIndex(arr: any[]) {
-    return Math.floor(Math.random() * arr.length)
-}
-
-function NormalizeArray(arr: number[]) {
-    let max = arr[0]
-    for (const n of arr)
-        if (n > max)
-            max = n
-
-    if (max === 0)
-        return arr.map(() => 0)
-    return arr.map(e => e / max)
-}
-
-function ArrayAvg(arr: number[]) {
-    let sum = 0;
-    for (const n of arr)
-        sum += n
-
-    return (sum / arr.length)
 }
