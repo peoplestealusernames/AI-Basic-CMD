@@ -2,5 +2,8 @@
   "dependencies": {
     "@types/node": "^18.8.5",
     "gpu.js": "git@github.com:dhritzkiv/gpu.js.git"
+  },
+  "scripts": {
+    "mem": "$env:NODE_OPTIONS='--max-old-space-size=8096'"
   }
 }
